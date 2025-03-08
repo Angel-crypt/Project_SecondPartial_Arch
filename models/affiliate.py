@@ -46,12 +46,11 @@ class Affiliate:
                 enrollment_date_formatted = self.enrollment_date
 
         return {
-            'id': self.id,
             'name': self.name,
             'id_card': self.id_card,
             'birth_date': birth_date_formatted,
             'enrollment_date': enrollment_date_formatted,
-            'party': self.party
+            'id_party': self.id_party
         }
 
     @classmethod
@@ -80,5 +79,5 @@ class Affiliate:
             id_card=data.get("id_card"),
             birth_date=birth_date,
             enrollment_date=enrollment_date,
-            party=data.get("party")
+            id_party=data.get('id_party')
         )

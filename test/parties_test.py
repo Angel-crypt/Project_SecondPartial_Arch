@@ -15,44 +15,41 @@ if __name__ == "__main__":
 
     # Prueba Obtener todos los partidos
     print("\n---- Listado de partidos ----")
-    partidos = party_controller.get_all_parties()
-    for partido in partidos:
+    parties = party_controller.get_all_parties()
+    for party in parties:
         print(
-            f"ID: {partido.id}, Nombre: {partido.name}, Siglas: {partido.acronym}, Fundacion: {partido.fundation_date}")
+            f"ID: {party.id}, Nombre: {party.name}, Siglas: {party.acronym}, Fundacion: {party.fundation_date}")
 
     # Prueba Obtener por id
-    id = 1
+    id = 2 #! Error aqui
     print(f"\nPartido por id: {id}")
-    partido = party_controller.get_party_by_id(id)
-    print(f"ID: {partido.id}, Nombre: {partido.name}, Siglas: {partido.acronym}")
+    party = party_controller.get_party_by_id(id)
+    if party is not None:
+        print(f"ID: {party.id}, Nombre: {party.name}, Siglas: {party.acronym}")
 
     # Prueba Obtener por Nombre
     name = "Morena"
     print(f"\nPartido por nombre: {name}")
-    partido = party_controller.get_party_by_name(name)
-    if partido:
+    party = party_controller.get_party_by_name(name)
+    if party:
         print(
-            f"ID: {partido.id}, Nombre: {partido.name}, Siglas: {partido.acronym}")
-    else:
-        print("Partido no encontrado.")
+            f"ID: {party.id}, Nombre: {party.name}, Siglas: {party.acronym}")
 
     # Obtener por Siglas
     acronym = "PAN" 
     print(f"\nPartido por siglas: {acronym}")
-    partido = party_controller.get_party_by_acronym(acronym)
-    if partido:  # Verifica si partido no es None
+    party = party_controller.get_party_by_acronym(acronym)
+    if party:  # Verifica si partido no es None
         print(
-            f"ID: {partido.id}, Nombre: {partido.name}, Siglas: {partido.acronym}")
-    else:
-        print("Partido no encontrado.")
+            f"ID: {party.id}, Nombre: {party.name}, Siglas: {party.acronym}")
 
-    print("\nCrear Party")
+    print("\nCrear Partido")
     new_party = Party(name="Partido Revolucionario Independiente",acronym="PRI",fundation_date="2000-03-12",ideology="Derecha")
-    partido = party_controller.create_party(new_party)
+    party = party_controller.create_party(new_party)
 
     # update_party = Party(1,"Morena",None,"2015-02-10","Izquierda",None)
     #partido = party_controller.update_party(update_party)
     
     print("\nEliminar Partido")
-    id = 2
-    partido = party_controller.delete_party(id)
+    id = 1
+    party = party_controller.delete_party(id)

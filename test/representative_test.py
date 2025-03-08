@@ -15,50 +15,38 @@ if __name__ == "__main__":
 
     # Prueba Obtener todos los representantes
     print("\n---- Listado de representantes ----")
-    representantes = representative_controller.get_all_representatives()
-    for representative in representantes:
-        partido = representative_controller.get_name_party(representative.id_party)
-        print(
-            f"ID: {representative.id}, Nombre: {representative.name}, 'Numero de document':{representative.id_card}, 'Partido':{partido}")
+    representatives = representative_controller.get_all_representatives()
+    if representatives:
+        representative_controller.print_all_info(Representative)
 
     # Prueba Obtener por id
-    id = 1
+    id = 2
     print(f"\nRepresentante por id: {id}")
-    representante = representative_controller.get_representative_by_id(id)
-    partido = representative_controller.get_name_party(representante.id_party)
-    if representante:
-        print(
-            f"ID: {representante.id}, Nombre: {representante.name}, 'Numero de document':{representante.id_card}, 'Partido':{partido}")
-    else:
-        print("Representa no encontrado.")
+    representative = representative_controller.get_representative_by_id(id)
+    if representative:
+        representative_controller.print_info(representative)
 
     # Prueba obtener por id de partido
-    id_party = 1
-    partido = representative_controller.get_name_party(id_party)
-    print(f"\nRepresentante por Partido, id: {id_party} = {partido}")
-    representantes = representative_controller.get_representative_by_party(
-        id_party)
-    if partido:
-        if representantes:
-            for representative in representantes:
-                print(
-                    f"ID: {representative.id}, Nombre: {representative.name}, 'Numero de document':{representative.id_card}")
-        else:
-            print("El partido no tiene representantes.")
-    else:
-        print("Partido no encontrado")
+    print(f"\nRepresentante por Partido")
+    id_party = 2
+    party = representative_controller.get_name_party(id_party)
+    if party != "Partido no encontrado.":
+        print(f"\nPartido = {party}")
+        representatives = representative_controller.get_affiliate_by_party(id_party)
+
+        if representatives:
+            representative_controller.print_all_info(Representative)
+    
     
     # Prueba obtener por nombre
     name = "Angel Cruz"
     print(f"\nObtener representante por nombre: {name}")
-    representante = representative_controller.get_representative_by_name(name)
-    partido = representative_controller.get_name_party(representative.id)
-    if representante:
-        print(
-            f"ID: {representante.id}, Nombre: {representante.name}, 'Numero de document':{representante.id_card}, 'Partido':{partido.name}")
+    representative = representative_controller.get_representative_by_name(name)
+    if representative:
+        representative_controller.print_info(representative)
 
     # Crear representante
-    print("\n")
+    print("\nCrear nuevo representante")
     new_representative = Representative(name="Angel Cruz",id_card="frgiuhbhjbg",birth_date="2000-03-12",enrollment_date="2025-03-6",id_party=5)
     representante = representative_controller.create_representative(
         new_representative)

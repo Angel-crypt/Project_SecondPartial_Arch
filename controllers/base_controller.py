@@ -3,11 +3,37 @@ class Controller:
         self.supabase = supabase_client
         self.table = table
 
-    def validate_exist(self, value, v_name):
-        exist = self.supabase.table(self.table).select(
+    def print_info(self, model):
+        """
+        Imprime la información del afiliado.
+        """
+        partido_name = self.get_name_party(
+            model.id_party)
+        print(
+            f"ID: {model.id}, Nombre: {model.name}, "
+            f"Número de documento: {model.id_card}, Partido: {partido_name}"
+        )
+    
+    def print_all_info(self, model):
+        """
+        Imprime la información de todos los afiliados.
+        """
+        alls = self.get_all(
+            model)
+        if alls:
+            for one in alls:
+                self.print_info(one)
+        else:
+            print("No hay afiliados disponibles.")
+
+    def validate_exist(self, value, v_name, searchable, table=None):
+        if table is None:
+            table = self.table
+
+        exist = self.supabase.table(table).select(
             f"{v_name}").eq(v_name, value).execute()
         if not exist.data:
-            message = f"El elemento con {v_name}: {value} no fue encontrado."
+            message = f"El {searchable} con {v_name}: {value} no fue encontrado."
             return False, message
         return True, "Elemento encontrado."
 
@@ -22,18 +48,25 @@ class Controller:
 
     def get_all(self, model):
         response = self.supabase.table(self.table).select("*").execute()
-        return [model.from_dict(item) for item in response.data]
+        if response.data: 
+            return [model.from_dict(item) for item in response.data]
+        else:
+            print("No se encontraron registros.")
+            return False
 
     def get_by_id_party(self, id_party, model):
         response = self.supabase.table(self.table).select(
             "*").eq("id_party", id_party).execute()
-        return [model.from_dict(item) for item in response.data] if response.data else []
+        if response.data:
+            return [model.from_dict(item) for item in response.data] if response.data else []
+        else:
+            print(f"No hay afiliados en el partido {self.get_name_party(id_party)}")
 
-    def get_by_known_as(self, identifier, ide_name, model):
+    def get_by_known_as(self, identifier, ide_name, model, searchable):
         if isinstance(identifier, str) and ide_name != "id":
             identifier = identifier.upper()
 
-        exist, message = self.validate_exist(identifier, ide_name)
+        exist, message = self.validate_exist(identifier, ide_name, searchable)
         if not exist:
             print(message)
             return None
