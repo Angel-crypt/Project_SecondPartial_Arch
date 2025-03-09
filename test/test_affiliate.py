@@ -44,7 +44,7 @@ if __name__ == "__main__":
         if affiliates: 
             affiliate_controller.print_all_info(Affiliate)
 
-    # Crear nuevo afiliado
+    '''# Crear nuevo afiliado
     print("\nCrear nuevo afiliado")
     new_affiliate = Affiliate(name="Angel Cruz", id_card="frgiuhbhjbg",birth_date="2000-03-12",enrollment_date="2025-03-6",id_party=1)
     affiliate = affiliate_controller.create_affiliate(new_affiliate)
@@ -57,4 +57,4 @@ if __name__ == "__main__":
     # Eliminar afiliado
     print("\nEliminar afiliado")
     id = 16
-    affiliate = affiliate_controller.delete_affiliate(id)
+    affiliate = affiliate_controller.delete_affiliate(id)'''
