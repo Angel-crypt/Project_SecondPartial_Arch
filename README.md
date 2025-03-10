@@ -176,7 +176,7 @@ DELETE /representatives/1?confirm=true
 ```
 
 ## 🛠 Tecnologías utilizadas
-- Python 3.x
+- Python 3.12.3
 - Flask (Microframework para desarrollo web)
 - Supabase
 - Virtualenv (Para el manejo de entornos virtuales)
