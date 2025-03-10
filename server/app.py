@@ -220,11 +220,11 @@ def delete_party(id):
         # Si no se pudo eliminar, retornamos el código 400 (Bad Request) o 404 (Not Found)
         return jsonify({'error': message}), 400 if "confirmación" in message else 404
 
-''' Rutas para manejar representantes '''
+''' Rutas para manejar Afiliados '''
 
 '''
     Cuando se pide la data, se espera recibir un 
-    JSON con los datos del representante
+    JSON con los datos del afiliados
     Ejemplo:
     {
         "name": "Juan",
@@ -234,14 +234,14 @@ def delete_party(id):
         "id_party": 1
     }
     
-    Si el nombre del representante tiene espacios, se debe
+    Si el nombre del afiliados tiene espacios, se debe
     reemplazar por el caracter '%20'
     Ejemplo:
     "name": "Juan Perez"
         Convertir a:
     "name": "Juan%20Perez"
     
-    Para poder eliminar un representante, es necesario confirmar la eliminación
+    Para poder eliminar un afiliados, es necesario confirmar la eliminación
     enviando el parámetro 'confirm' con el valor 'true'
     Ejemplo:
     /representatives/1?confirm=true
@@ -384,7 +384,8 @@ def delete_affiliate(id):
         "id_card": "123456",
         "birth_date": "2000-03-12",
         "enrollment_date": "2025-03-6",
-        "id_party": 1
+        "id_party": 1,
+        "party_position": "Presidente"
     }
     
     Si el nombre del representante tiene espacios, se debe
