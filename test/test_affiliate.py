@@ -14,35 +14,54 @@ if __name__ == "__main__":
     affiliate_controller = AffiliateController(supabase)
     
     # Obtener todos los afiliados
-    print("\n----Listado de afiliados----")
-    affiliates = affiliate_controller.get_all_affiliates()
-    if affiliates:
-        affiliate_controller.print_all_info(Affiliate)
+    def get_all_affiliates():
+        print("\n----Listado de afiliados----")
+        affiliates = affiliate_controller.get_all_affiliates()
+        if affiliates is None or not affiliates:
+            print("No affiliates found.")
+            return
+        affiliate_controller.print_all_info(Affiliate, affiliates)
     
     # Obtener por id
-    id = 1
-    print(f"\nAfiliado por id: {id}")
-    affiliate = affiliate_controller.get_affiliate_by_id(id)
-    if affiliate:
-        affiliate_controller.print_info(affiliate)
+    id = 7
+    def get_affiliate_by_id(id):
+        if id is None:
+            print("ID is None, cannot retrieve affiliate.")
+            return
+        print(f"\nAfiliado por id: {id}")
+        affiliate = affiliate_controller.get_affiliate_by_id(id)
+        if affiliate:
+            if affiliate.id_party is None:
+                print(f"El afiliado con ID {id} no tiene un partido asociado.")
+            affiliate_controller.print_info(affiliate)
+        else:
+            print(f"No se encontró el afiliado con ID: {id}")
 
     # Obtener por nombre
     name = 'Angel Cruz'
-    print(f"\nAfiliado por nombre: {name}")
-    affiliate = affiliate_controller.get_affiliate_by_name(name)
-    if affiliate:
-        affiliate_controller.print_info(affiliate)
+    def get_affiliate_by_name(name):
+        print(f"\nAfiliado por nombre: {name}")
+        affiliate = affiliate_controller.get_affiliate_by_name(name)
+        if affiliate:
+            affiliate_controller.print_info(affiliate)
 
     # Obtener por id de partido
-    print(f"\nAfiliado por Partido")
     id_party = 1
-    party = affiliate_controller.get_name_party(id_party)
-    if party != "Partido no encontrado.":
-        print(f"Partido = {party}")
-        affiliates = affiliate_controller.get_affiliate_by_party(id_party)
+    def get_affiliate_by_party(id_party):
+        print(f"\nAfiliado por Partido")
+        party = affiliate_controller.get_name_party(id_party)
+        if party != "Partido no encontrado.":
+            print(f"Partido = {party}")
+            affiliates = affiliate_controller.get_affiliate_by_party(id_party)
 
-        if affiliates: 
-            affiliate_controller.print_all_info(Affiliate)
+            if affiliates:
+                for affiliate in affiliates:
+                    affiliate_controller.print_info(affiliate)
+    
+    get_all_affiliates()
+    get_affiliate_by_id(id)
+    get_affiliate_by_name(name)
+    get_affiliate_by_party(id_party)
 
     '''# Crear nuevo afiliado
     print("\nCrear nuevo afiliado")

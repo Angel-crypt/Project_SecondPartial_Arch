@@ -80,12 +80,11 @@ def login():
     }
     
     Si el nombre del partido tiene espacios, se debe
-    reemplazar por el caracter '%20' o '+'
+    reemplazar por el caracter '%20'
     Ejemplo:
     "name": "Partido Revolucionario Independiente"
         Convertir a:
     "name": "Partido%20Revolucionario%20Independiente"
-    "name": "Partido+Revolucionario+Independiente"
     
     Si el partido que se desea eliminar tiene representantes o afiliados,
     el servidor responderá con un mensaje de error y el código 400 (Bad Request), es necesario confirmar la eliminación
@@ -163,7 +162,9 @@ def create_party():
         return jsonify(result), status_code
 
     # Si el partido se creó correctamente, retornamos los datos del partido con código 201
-    return jsonify(result.to_dict()), status_code
+    response_data = result.to_dict()
+    response_data["ID"] = result.id
+    return jsonify(response_data), status_code
 
 #* Actualizar un partido
 @app.route('/parties/<int:id>', methods=['PUT'])
@@ -188,7 +189,9 @@ def update_party(id):
         return jsonify(result), status_code
 
     # Si la actualización fue exitosa, devuelve el partido actualizado con el código 200
-    return jsonify(result.to_dict()), status_code
+    response_data = result.to_dict()
+    response_data["ID"] = result.id
+    return jsonify(response_data), status_code
 
 #* Eliminar un partido
 @app.route('/parties/<int:id>', methods=['DELETE'])
@@ -206,6 +209,147 @@ def delete_party(id):
     else:
         # Si no se pudo eliminar, retornamos el código 400 (Bad Request) o 404 (Not Found)
         return jsonify({'error': message}), 400 if "confirmación" in message else 404
+
+''' Rutas para manejar representantes '''
+
+'''
+    Cuando se pide la data, se espera recibir un 
+    JSON con los datos del representante
+    Ejemplo:
+    {
+        "name": "Juan",
+        "id_card": "123456",
+        "birth_date": "2000-03-12",
+        "enrollment_date": "2025-03-6",
+        "id_party": 1
+    }
+    
+    Si el nombre del representante tiene espacios, se debe
+    reemplazar por el caracter '%20'
+    Ejemplo:
+    "name": "Juan Perez"
+        Convertir a:
+    "name": "Juan%20Perez"
+    
+    Para poder eliminar un representante, es necesario confirmar la eliminación
+    enviando el parámetro 'confirm' con el valor 'true'
+    Ejemplo:
+    /representatives/1?confirm=true
+'''
+
+# * Serializa un afiliado y convierlo en un objeto JSON
+
+def serialize_affiliate(affiliate):
+    if not affiliate:
+        return jsonify({'error': 'Afiliado no encontrado'}), 404
+    return jsonify({
+        "ID": affiliate.id,
+        "Nombre": affiliate.name,
+        "Numero de documento": affiliate.id_card,
+        "Fecha de nacimiento": affiliate.birth_date,
+        "Fecha de inscripcion": affiliate.enrollment_date,
+        "ID Partido": affiliate.id_party,
+        "Nombre Partido": affiliate_controller.get_name_party(affiliate.id_party)
+    })
+
+@app.route('/affiliates', methods=['GET'])
+def get_all_affiliates():
+    affiliates = affiliate_controller.get_all_affiliates()
+    if affiliates is None or not affiliates:
+        return jsonify({"message": "No affiliates found."}), 404
+    return jsonify([{
+        "ID": affiliate.id,
+        "Nombre": affiliate.name,
+        "Numero de documento": affiliate.id_card,
+        "Fecha de nacimiento": affiliate.birth_date,
+        "Fecha de inscripcion": affiliate.enrollment_date,
+        "ID Partido": affiliate.id_party,
+        "Nombre Partido": affiliate_controller.get_name_party(affiliate.id_party)
+    } for affiliate in affiliates])
+
+@app.route('/affiliates/id/<int:id>', methods=['GET'])
+def get_affiliate_by_id(id):
+    affiliate = affiliate_controller.get_affiliate_by_id(id)
+    return serialize_affiliate(affiliate)
+
+@app.route('/affiliates/name/<string:name>', methods=['GET'])
+def get_affiliate_by_name(name):
+    affiliate = affiliate_controller.get_affiliate_by_name(name)
+    return serialize_affiliate(affiliate)
+
+@app.route('/affiliates/party/<int:id_party>', methods=['GET'])
+def get_affiliate_by_party(id_party):
+    party = affiliate_controller.get_name_party(id_party)
+    if party == "Partido no encontrado.":
+        return jsonify({"message": "Partido no encontrado."}), 404
+    affiliates = affiliate_controller.get_affiliate_by_party(id_party)
+    return jsonify([{
+        "ID": affiliate.id,
+        "Nombre": affiliate.name,
+        "Numero de documento": affiliate.id_card,
+        "Fecha de nacimiento": affiliate.birth_date,
+        "Fecha de inscripcion": affiliate.enrollment_date,
+        "ID Partido": affiliate.id_party,
+        "Nombre Partido": party
+    } for affiliate in affiliates])
+
+@app.route('/affiliates', methods=['POST'])
+def create_affiliate():
+    data = request.json
+    new_affiliate = Affiliate(**data)
+    result, status_code = affiliate_controller.create_affiliate(new_affiliate)
+    if isinstance(result, dict) and 'error' in result:
+        return jsonify(result), status_code
+    # Aquí se modifica para incluir el ID en la respuesta
+    response_data = result.to_dict()  # Convierte el afiliado a un diccionario
+    response_data["ID"] = result.id  # Añade el ID al diccionario
+
+    return jsonify(response_data), status_code
+
+# * Actualizar un partido
+@app.route('/affiliates/<int:id>', methods=['PUT'])
+def update_affiliate(id):
+    # Obtener los datos JSON de la solicitud
+    data = request.json
+
+    # Buscar si el afiliado existe
+    affiliate_to_update = affiliate_controller.get_affiliate_by_id(id)
+    if not affiliate_to_update:
+        return jsonify({'error': 'Afiliado no encontrado'}), 404
+    
+    # Actualizar los campos del afiliado
+    data['id'] = id
+    updated_affiliate = Affiliate(**data)
+    
+    # Intentar actualizar el afiliado
+    result, status_code = affiliate_controller.update_affiliate(updated_affiliate)
+    
+    # Error
+    if isinstance(result, dict) and 'error' in result:
+        return jsonify(result), status_code
+    
+    response_data = result.to_dict()
+    response_data["ID"] = result.id
+    
+    # Actualización exitosa
+    return jsonify(response_data), status_code
+
+# * Eliminar un afiliado
+@app.route('/affiliates/<int:id>', methods=['DELETE'])
+def delete_affiliate(id):
+    # Verificar si se confirma la eliminación
+    confirm_deletion = request.args.get('confirm', 'false').lower() == 'true'
+    
+    # Llamar al controlador para intentar eliminar el afiliado
+    success, message = affiliate_controller.delete_affiliate(id, confirm_deletion)
+    
+    if success:
+        # Si se eliminó correctamente, retornamos el código de éxito 204 (No Content)
+        return jsonify({'success': message}), 200
+    else:
+        # Si no se pudo eliminar, retornamos el código 400 (Bad Request) o 404 (Not Found)
+        return jsonify({'error': message}), 400 if "confirmación" in message else 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)

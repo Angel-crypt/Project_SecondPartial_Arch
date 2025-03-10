@@ -60,4 +60,5 @@ if __name__ == "__main__":
     
     print("\nEliminar Partido")
     id = 1
-    party = party_controller.delete_party(id)
+    party, message = party_controller.delete_party(id)
+    print(message)

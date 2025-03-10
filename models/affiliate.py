@@ -20,12 +20,6 @@ class Affiliate:
         self.enrollment_date = enrollment_date
         self.id_party = id_party
 
-    def __repr__(self):
-        """
-        Representación en string del afiliado.
-        """
-        return f"<Afiliado {self.name}>"
-
     def to_dict(self):
         """
         Convierte la instancia del afiliado a un diccionario.

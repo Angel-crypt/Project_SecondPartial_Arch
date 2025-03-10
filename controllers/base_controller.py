@@ -9,17 +9,21 @@ class Controller:
         """
         partido_name = self.get_name_party(
             model.id_party)
+        if model.id_party is None:
+            partido_name = "Sin partido"
+        else:
+            partido_name = self.get_name_party(model.id_party)
+
         print(
             f"ID: {model.id}, Nombre: {model.name}, "
             f"Número de documento: {model.id_card}, Partido: {partido_name}"
         )
+
     
-    def print_all_info(self, model):
+    def print_all_info(self, model, alls):
         """
         Imprime la información de todos los afiliados.
         """
-        alls = self.get_all(
-            model)
         if alls:
             for one in alls:
                 self.print_info(one)
