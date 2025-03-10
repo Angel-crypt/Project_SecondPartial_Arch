@@ -84,7 +84,6 @@ class AffiliateController(Controller):
             affiliate.id_party, 'id', 'partido', table='parties')
 
         if not party_exist:
-            print(message)
             # Devuelve un mensaje de error y código 404
             return {'error': message}, 404
 
@@ -105,7 +104,7 @@ class AffiliateController(Controller):
     
     def delete_affiliate(self, id, confirm_deletion=False):
         # Verificar si el afiliado existe
-        exist, message = self.validate_exist(id, "id", "afiliado")
+        exist = self.validate_exist(id, "id", "afiliado")
         if not exist:
             return False, "Afiliado no encontrado."
 
@@ -118,11 +117,8 @@ class AffiliateController(Controller):
             response = self.supabase.table(
                 self.table).delete().eq("id", id).execute()
             if response.data and len(response.data) > 0:
-                print(f"Se ha eliminado correctamente el afiliado con id: {id}")
                 return True, f"Afiliado con id: {id} eliminado correctamente."
             else:
-                print(f"No se pudo eliminar al afiliado con id: {id}")
                 return False, "No se pudo eliminar al afiliado."
         except Exception as e:
-            print(f"Error al eliminar al afiliado: {e}")
             return False, f"Error al eliminar al afiliado: {e}"

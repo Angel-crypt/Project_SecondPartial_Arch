@@ -21,12 +21,6 @@ class Representative:
         self.id_party = id_party
         self.party_position = party_position
 
-    def __repr__(self):
-        """
-        Representación en string del representante.
-        """
-        return f"<Representante {self.name}>"
-
     def to_dict(self):
         """
         Convierte la instancia del representante a un diccionario.
