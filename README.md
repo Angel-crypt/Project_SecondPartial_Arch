@@ -167,13 +167,19 @@ El valor de `<name>` es `"Juan Perez"`, se deben convertir los espacios en `%20`
 Esto aplica para cualquier parámetro en la URL que contenga espacios. El reemplazo de los espacios con `%20` asegura que la solicitud se procese correctamente.
 
 ### ⚠️ Confirmación para eliminar recursos
-Para poder eliminar  cualquier otro recurso, es necesario confirmar la eliminación enviando el parámetro `confirm` con el valor `true`.
+Para poder eliminar cualquier recurso, es necesario confirmar la eliminación enviando el parámetro `confirm` con el valor `true`.
 
 **Ejemplo de solicitud HTTP para eliminar un representante:**
 
 ```javascript
 DELETE /representatives/1?confirm=true
 ```
+
+## 🛠 Tecnologías utilizadas
+- Python 3.x
+- Flask (Microframework para desarrollo web)
+- Supabase
+- Virtualenv (Para el manejo de entornos virtuales)
 
 ## 📢 Notas
 - Asegúrate de que Python 3.12 está instalado en tu sistema antes de iniciar el proyecto.
